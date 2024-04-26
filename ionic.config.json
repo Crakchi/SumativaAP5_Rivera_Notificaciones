@@ -1,0 +1,7 @@
+{
+  "name": "SumativaAP5_Rivera_Notificaciones",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
