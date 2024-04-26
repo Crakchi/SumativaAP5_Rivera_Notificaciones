@@ -16,27 +16,36 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     await LocalNotifications.requestPermissions();//solicitar permisos de la app
-    await LocalNotifications.schedule({//Elaboracion del objeto notificacion
+  }
+
+  async readDatabaseAndNotify() {
+    const route = ref(this.database, "/notificaciones/hora");
+
+    object(route).subscribe(attributes => {
+      const valores_db = attributes.snapshot.val();
+      console.log(valores_db);
+      if (valores_db >= 0 && valores_db < 12) {
+        this.sendNotification("ES DE DIA");
+      } else if (valores_db >= 12 && valores_db < 18) {
+        this.sendNotification("tardeee");
+      } else if (valores_db >= 18 && valores_db <= 23) {
+        this.sendNotification("NOCHEEE");
+      } else {
+        this.sendNotification("Fuera de Rango, ajuste su zona horaria");
+      }
+    });
+  }
+
+  async sendNotification(message: string) {
+    await LocalNotifications.schedule({
       notifications: [
         {
-          title: "Esta es una notificación emergente",
-          body: "Esta notificación debería ejecutarse en segundo plano pero no cuando lapp esté cerrada",
+          title: "Notificación",
+          body: message,
           id: 1
         }
       ]
     });
-    
-    const route = ref(this.database, "/notificaciones/hora");
-    
-    object(route).subscribe(attributes => {
-      const valores_db = attributes.snapshot.val();
-      console.log(valores_db);
-      if (valores_db === true) {
-        this.cl1 = "warning"; // Actualizar el valor de cl1 a "warning" si se cumple la condición
-      } else if (valores_db === false) {
-        // Hacer algo si valores_db es igual a false, por ejemplo cambiar el color a "light"
-        this.cl1 = "light";
-      }
-    });
   }
 }
+ 
